@@ -324,7 +324,7 @@ const App: React.FC = () => {
                   <option value="PREPAID">선불</option>
                   <option value="COLLECT">착불</option>
                   <option value="OFFICE">사무실</option>
-                  <option value="RECEIPT_REQUIRED">수증</option>
+                  <option value="RECEIPT_REQUIRED">인수증</option>
                 </select>
               </div>
 
