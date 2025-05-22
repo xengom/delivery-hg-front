@@ -22,9 +22,9 @@ This is the frontend application for the Delivery Tracker, built with React.
 ```
 public/         # Static assets
 src/
-├── App.js      # Main application component
+├── App.tsx     # Main application component
 ├── App.css     # Application styles
-└── index.js    # Entry point
+└── index.tsx   # Entry point
 ```
 
 ## Getting Started
