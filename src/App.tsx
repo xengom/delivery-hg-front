@@ -1,36 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-
-// Define types for the delivery data
-interface Address {
-  full: string;
-}
-
-interface Recipient {
-  address?: Address;
-  phone?: string;
-}
-
-interface Delivery {
-  id: string;
-  status: 'PICKED_UP' | 'DELIVERED' | 'SETTLED';
-  recipient?: Recipient;
-  boxCount: number;
-  fee?: number;
-  settlement: 'PREPAID' | 'COLLECT' | 'OFFICE' | 'RECEIPT_REQUIRED';
-}
-
-type TopTapType = 'pickup' | 'delivered' | 'settled';
-type BottomTopTapType = 'delivery' | 'stats' | 'address';
+import { Delivery, TopTabType, BottomTabType, FormData } from './types';
+import DeliveryTab from './components/DeliveryTab';
+import StatsTab from './components/StatsTab';
+import AddressTab from './components/AddressTab';
 
 const App: React.FC = () => {
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
-  const [activeTab, setActiveTab] = useState<TopTapType>('pickup');
-  const [activeBottomTab, setActiveBottomTab] = useState<BottomTopTapType>('delivery');
+  const [activeTab, setActiveTab] = useState<TopTabType>('pickup');
+  const [activeBottomTab, setActiveBottomTab] = useState<BottomTabType>('delivery');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   // Form state for the modal
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     businessName: '',
     phone: '',
     address: '',
@@ -52,10 +34,6 @@ const App: React.FC = () => {
       console.error('Error fetching deliveries:', error);
     }
   };
-
-  const filteredDeliveries = activeTab === 'pickup'
-    ? deliveries.filter(d => d.status !== 'SETTLED')
-    : deliveries.filter(d => d.status === 'SETTLED');
 
   const formatSettlement = (settlement: string): string => {
     const map: Record<string, string> = {
@@ -169,69 +147,25 @@ const App: React.FC = () => {
         {/*<button>☰</button>*/}
       </header>
 
-      <nav className="tabs">
-        <button 
-          className={activeTab === 'pickup' ? 'active' : ''} 
-          onClick={() => setActiveTab('pickup')}
-        >
-          진행중
-        </button>
-        <button
-            className={activeTab === 'delivered' ? 'active' : ''}
-            onClick={() => setActiveTab('delivered')}
-        >
-          배송완료
-        </button>
-        <button 
-          className={activeTab === 'settled' ? 'active' : ''} 
-          onClick={() => setActiveTab('settled')}
-        >
-          정산완료
-        </button>
-      </nav>
+      {activeBottomTab === 'delivery' && (
+        <DeliveryTab
+          deliveries={deliveries}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          generateOrderNumber={generateOrderNumber}
+          handleStatusChange={handleStatusChange}
+          formatSettlement={formatSettlement}
+        />
+      )}
 
-      <main id="list">
-        {activeBottomTab === 'delivery' && (
-          <>
-            {filteredDeliveries.map(d => (
-              <article key={d.id} className="card" data-id={d.id} data-st={d.status}>
-                <div>
-                  <h3>{d.recipient?.address?.full || '직접 입력'}</h3>
-                  <p>{d.boxCount}박스 · ₩{d.fee || 0} · {formatSettlement(d.settlement)}</p>
-                </div>
-                <div className="act">
-                  <a href={`sms:${d.recipient?.phone || ''}`} aria-label="SMS 보내기">✉</a>
-                  <a 
-                    href={`nmap://search?query=${encodeURIComponent(d.recipient?.address?.full || '')}`} 
-                    aria-label="지도 보기"
-                  >
-                    🗺
-                  </a>
-                  <button onClick={() => handleStatusChange(d.id, d.status)}>
-                    {d.status === 'PICKED_UP' ? '배송' : d.status === 'DELIVERED' ? '정산' : '완료'}
-                  </button>
-                </div>
-              </article>
-            ))}
-          </>
-        )}
+      {activeBottomTab === 'stats' && <StatsTab />}
 
-        {activeBottomTab === 'stats' && (
-          <div className="tab-content">
-            <h2>통계</h2>
-            <p>통계 정보가 여기에 표시됩니다.</p>
-          </div>
-        )}
-
-        {activeBottomTab === 'address' && (
-          <div className="tab-content">
-            <h2>주소록</h2>
-            <p>주소록 정보가 여기에 표시됩니다.</p>
-          </div>
-        )}
-      </main>
-
-      <button id="fab" onClick={() => setIsModalOpen(true)}>＋</button>
+      {activeBottomTab === 'address' && <AddressTab />}
 
       <nav className="bottom">
         <a 
@@ -253,118 +187,6 @@ const App: React.FC = () => {
           주소록
         </a>
       </nav>
-
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>새 배달 등록</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>주문번호</label>
-                <input 
-                  type="text" 
-                  value={generateOrderNumber()} 
-                  disabled 
-                  placeholder="자동 생성됩니다" 
-                />
-                <small>자동 생성됩니다</small>
-              </div>
-
-              <div className="form-group">
-                <label>상호명</label>
-                <input 
-                  type="text" 
-                  name="businessName" 
-                  value={formData.businessName} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
-
-              <div className="form-group">
-                <label>휴대전화번호</label>
-                <input 
-                  type="tel" 
-                  name="phone" 
-                  value={formData.phone} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
-
-              <div className="form-group">
-                <label>주소</label>
-                <input 
-                  type="text" 
-                  name="address" 
-                  value={formData.address} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
-
-              <div className="form-group">
-                <label>배송료</label>
-                <input 
-                  type="number" 
-                  name="fee" 
-                  value={formData.fee} 
-                  onChange={handleInputChange} 
-                  required 
-                />
-              </div>
-
-              <div className="form-group">
-                <label>정산방법</label>
-                <select 
-                  name="settlementMethod" 
-                  value={formData.settlementMethod} 
-                  onChange={handleInputChange}
-                >
-                  <option value="PREPAID">선불</option>
-                  <option value="COLLECT">착불</option>
-                  <option value="OFFICE">사무실</option>
-                  <option value="RECEIPT_REQUIRED">인수증</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>배송상태</label>
-                <input 
-                  type="text" 
-                  value="배송준비" 
-                  disabled 
-                />
-                <small>기본값: 배송준비</small>
-              </div>
-
-              <div className="form-group">
-                <label>정산상태</label>
-                <input 
-                  type="text" 
-                  value={formData.settlementMethod === 'PREPAID' ? '정산완료' : '정산전'} 
-                  disabled 
-                />
-                <small>{formData.settlementMethod === 'PREPAID' ? '선불은 정산완료로 표시됩니다' : '선불 외에는 정산전으로 표시됩니다'}</small>
-              </div>
-
-              <div className="form-group">
-                <label>비고</label>
-                <textarea 
-                  name="notes" 
-                  value={formData.notes} 
-                  onChange={handleInputChange}
-                ></textarea>
-              </div>
-
-              <div className="form-actions">
-                <button type="button" onClick={() => setIsModalOpen(false)}>취소</button>
-                <button type="submit">등록</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
