@@ -4,6 +4,7 @@ import { Delivery, TopTabType, BottomTabType, FormData } from './types';
 import DeliveryTab from './components/DeliveryTab';
 import StatsTab from './components/StatsTab';
 import AddressTab from './components/AddressTab';
+import { apiUrl } from './config/api';
 
 const App: React.FC = () => {
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
@@ -27,7 +28,7 @@ const App: React.FC = () => {
 
   const fetchDeliveries = async (): Promise<void> => {
     try {
-      const response = await fetch('/api/deliveries');
+      const response = await fetch(apiUrl('deliveries'));
       const data = await response.json();
       setDeliveries(data);
     } catch (error) {
@@ -56,7 +57,7 @@ const App: React.FC = () => {
     }
 
     try {
-      await fetch(`/api/deliveries/${id}/status`, {
+      await fetch(apiUrl(`deliveries/${id}/status`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -115,7 +116,7 @@ const App: React.FC = () => {
       };
 
       // API call would go here
-      // await fetch('/api/deliveries', {
+      // await fetch(apiUrl('deliveries'), {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify(newDelivery)

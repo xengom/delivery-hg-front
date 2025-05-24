@@ -78,6 +78,21 @@ Deploy to Cloudflare Pages:
 npm run deploy
 ```
 
+## Environment Variables
+
+The application uses environment variables for configuration. Create a `.env` file in the root directory with the following variables:
+
+- `REACT_APP_HOST` - The host IP address for the development server (e.g., `0.0.0.0` to listen on all interfaces)
+- `REACT_APP_API_URL` - The base URL for API requests (e.g., `/api` for relative paths or a full URL for a remote API)
+
+Example `.env` file:
+```
+REACT_APP_HOST=0.0.0.0
+REACT_APP_API_URL=/api
+```
+
+A `.env.example` file is provided as a template.
+
 ## API Integration
 
 The frontend communicates with the backend API through the following endpoints:

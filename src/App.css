@@ -68,6 +68,13 @@ main {
   font-size: 0.9rem;
 }
 
+.card p.note {
+  color: #4285f4;
+  font-style: italic;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+
 .card .act {
   display: flex;
   flex-direction: column;
@@ -258,6 +265,14 @@ textarea {
   background-color: #4285f4;
   border: none;
   color: white;
+}
+
+.form-actions .delete-btn {
+  background-color: #ea4335;
+  border: none;
+  color: white;
+  width: auto;
+  margin-right: auto;
 }
 
 /* Tab content */

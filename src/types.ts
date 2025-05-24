@@ -17,6 +17,21 @@ export interface Delivery {
   settlement: 'PREPAID' | 'COLLECT' | 'OFFICE' | 'RECEIPT_REQUIRED';
 }
 
+export interface Contact {
+  id: string;
+  businessName: string;
+  phone: string;
+  address: string;
+  note?: string;
+}
+
+export interface ContactFormData {
+  businessName: string;
+  phone: string;
+  address: string;
+  note: string;
+}
+
 export type TopTabType = 'pickup' | 'delivered' | 'settled';
 export type BottomTabType = 'delivery' | 'stats' | 'address';
 
