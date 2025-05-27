@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react';
-import { Contact, ContactFormData } from '../types';
+import { Contact, ContactFormData } from '../../types';
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData: ContactFormData;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | { target: { name: string; value: any } }) => void;
   onSubmit: (e: React.FormEvent) => void;
   isEditing: boolean;
   onDelete?: () => void;
@@ -48,7 +48,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
             name: 'address',
             value: fullAddress
           }
-        } as React.ChangeEvent<HTMLInputElement>;
+        };
 
         onInputChange(event);
       }
@@ -56,8 +56,8 @@ const ContactModal: React.FC<ContactModalProps> = ({
   }, [onInputChange]);
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <h2>{isEditing ? '연락처 수정' : '새 연락처 등록'}</h2>
         <form onSubmit={onSubmit}>
           <div className="form-group">
@@ -72,14 +72,80 @@ const ContactModal: React.FC<ContactModalProps> = ({
           </div>
 
           <div className="form-group">
-            <label>휴대전화번호</label>
-            <input 
-              type="tel" 
-              name="phone" 
-              value={formData.phone} 
-              onChange={onInputChange} 
-              required 
-            />
+            <label>휴대전화번호 (최대 3개)</label>
+            {formData.phones.map((phone, index) => (
+              <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                <input 
+                  type="tel" 
+                  value={phone} 
+                  onChange={(e) => {
+                    const newPhones = [...formData.phones];
+                    newPhones[index] = e.target.value;
+                    const event = {
+                      target: {
+                        name: 'phones',
+                        value: newPhones
+                      }
+                    };
+                    onInputChange(event);
+                  }} 
+                  required={index === 0}
+                  style={{ flex: 1 }}
+                />
+                {index > 0 && (
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const newPhones = [...formData.phones];
+                      newPhones.splice(index, 1);
+                      const event = {
+                        target: {
+                          name: 'phones',
+                          value: newPhones
+                        }
+                      };
+                      onInputChange(event);
+                    }}
+                    style={{ 
+                      backgroundColor: '#ea4335', 
+                      color: 'white', 
+                      border: 'none', 
+                      borderRadius: '4px', 
+                      padding: '0 10px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    삭제
+                  </button>
+                )}
+              </div>
+            ))}
+            {formData.phones.length < 3 && (
+              <button 
+                type="button" 
+                onClick={() => {
+                  const newPhones = ['', ...formData.phones]; // Add new phone at the beginning
+                  const event = {
+                    target: {
+                      name: 'phones',
+                      value: newPhones
+                    }
+                  };
+                  onInputChange(event);
+                }}
+                style={{ 
+                  backgroundColor: '#4285f4', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '4px', 
+                  padding: '5px 15px',
+                  cursor: 'pointer',
+                  marginTop: '10px'
+                }}
+              >
+                휴대전화번호 추가
+              </button>
+            )}
           </div>
 
           <div className="form-group">
@@ -122,10 +188,10 @@ const ContactModal: React.FC<ContactModalProps> = ({
 
           <div className="form-actions">
             {isEditing && onDelete && (
-              <button type="button" className="delete-btn" onClick={onDelete}>삭제</button>
+              <button type="button" className="delete-btn" style={{ backgroundColor: '#ea4335', color: 'white' }} onClick={onDelete}>삭제</button>
             )}
             <div style={{ display: 'flex', gap: '10px', marginLeft: isEditing ? 'auto' : '0' }}>
-              <button type="button" onClick={onClose}>취소</button>
+              <button type="button" onClick={onClose} style={{ whiteSpace: 'nowrap' }}>취소</button>
               <button type="submit">{isEditing ? '수정' : '등록'}</button>
             </div>
           </div>

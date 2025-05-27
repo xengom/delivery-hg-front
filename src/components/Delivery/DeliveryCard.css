@@ -1,0 +1,96 @@
+/* DeliveryCard.css */
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  width: 100%;
+}
+
+.card-header-content {
+  flex: 1;
+}
+
+.card-header-title {
+  margin-bottom: 5px;
+}
+
+.card-header-title p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.card-header-divider {
+  margin: 5px 0;
+  border-top: 1px solid #eee;
+  width: 100%;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-buttons {
+  margin-right: 10px;
+}
+
+.action-button {
+  margin-left: 5px;
+}
+
+.collapse-indicator {
+  margin-left: 10px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.collapse-arrow {
+  transform: rotate(0deg);
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.collapse-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.card-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  width: 100%;
+  display: block;
+  clear: both;
+  border-radius: 0 0 8px 8px;
+}
+
+.card-content.collapsed {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  margin-top: 0;
+  border-top: none;
+  background-color: transparent;
+}
+
+.card-content.expanded {
+  max-height: 500px;
+  opacity: 1;
+  padding: 0 10px 10px 10px;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+}

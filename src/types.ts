@@ -10,30 +10,32 @@ export interface Recipient {
 
 export interface Delivery {
   id: string;
-  status: 'PICKED_UP' | 'DELIVERED' | 'SETTLED';
+  status: 'RECEIVED' | 'PICKED_UP' | 'DELIVERING' | 'PENDING_SETTLEMENT' | 'SETTLED';
   recipient?: Recipient;
-  boxCount: number;
+  boxCount: string | number;
   fee?: number;
   settlement: 'PREPAID' | 'COLLECT' | 'OFFICE' | 'RECEIPT_REQUIRED';
+  businessName?: string;
+  notes?: string;
+  wholesaler?: string;
 }
 
 export interface Contact {
   id: string;
   businessName: string;
-  phone: string;
+  phones: string[]; // Changed from single phone to array of phones
   address: string;
   note?: string;
 }
 
 export interface ContactFormData {
   businessName: string;
-  phone: string;
+  phones: string[]; // Changed from single phone to array of phones
   address: string;
   note: string;
 }
 
-export type TopTabType = 'pickup' | 'delivered' | 'settled';
-export type BottomTabType = 'delivery' | 'stats' | 'address';
+export type BottomTabType = 'delivery' | 'stats' | 'contact';
 
 export interface FormData {
   businessName: string;
@@ -42,4 +44,6 @@ export interface FormData {
   fee: string;
   settlementMethod: 'PREPAID' | 'COLLECT' | 'OFFICE' | 'RECEIPT_REQUIRED';
   notes: string;
+  wholesaler?: string;
+  boxCount?: string;
 }

@@ -1,0 +1,9 @@
+These files need to be created manually:
+
+1. logo192.png - 192x192 pixel PNG image for PWA icon
+2. logo512.png - 512x512 pixel PNG image for PWA icon
+
+You can create these files using any image editing software.
+The icons should represent the "행복한 꽃배달" app with a flower delivery theme.
+
+For testing purposes, you can use any placeholder image with the correct dimensions.
